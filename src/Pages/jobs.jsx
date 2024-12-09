@@ -1,5 +1,5 @@
 
-const jobs = () => {
+const Jobs = () => {
     return (
         <div>
             jobs
@@ -7,4 +7,4 @@ const jobs = () => {
     );
 };
 
-export default jobs;
+export default Jobs;

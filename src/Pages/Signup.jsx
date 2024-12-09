@@ -1,15 +1,56 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
+import Swal from "sweetalert2";
 
 const Signup = () => {
+  const {createUser,updateUserProfile} = useContext(AuthContext)
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
+  const [signingError, setSigningError] = useState('');
+  const handleSignin = (event) =>{
+    event.preventDefault();
+    const form = event.target;
+    const name = form.userName.value;
+    const lastName = form.lastName.value;
+    const phone = form.phoneNumber.value;
+    const email = form.email.value;
+    const password = form.password.value;
+    const photo = form.photo.value;
+    console.log(name,lastName,phone,email,password,photo);
+    setSigningError('');
+    createUser(email,password)
+    .then( result =>{     
+      updateUserProfile(name,photo)
+      const user = result.user;
+      console.log(user);
+      Swal.fire({
+        position: "top-center",
+        icon: "success",
+        title: "Sign Up Succcess",
+        showConfirmButton: false,
+        timer: 1500
+      });
+      navigate(from, {replace: true});
+      
+    })
+    
+    .catch(error =>{
+      console.log(error);
+      setSigningError(error.message)
+    })
+    
+  }
   return (
     <section className="bg-white dark:bg-gray-900">
-      <div className="flex justify-center min-h-screen">
+      <div className=" m-5 flex justify-center min-h-screen">
         {/* Background Image */}
         <div
-          className="hidden bg-cover lg:block lg:w-2/5"
+          className="hidden bg-cover lg:block lg:w-2/5 rounded-r-2xl rounded-l-lg"
           style={{
             backgroundImage:
-              "url('https://images.unsplash.com/photo-1494621930069-4fd4b2e24a11?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=715&q=80')",
+              "url('https://i.ibb.co.com/F4r6Yq9/homepage-hero-copy.webp')",
           }}
         ></div>
 
@@ -17,7 +58,7 @@ const Signup = () => {
         <div className="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
           <div className="w-full">
             <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
-              Get your free account now.
+             Sign up on the RestuPOS.System
             </h1>
             <p className="mt-4 text-gray-500 dark:text-gray-400">
               Let’s get you all set up so you can verify your personal account
@@ -26,84 +67,55 @@ const Signup = () => {
 
             {/* Account Type Buttons */}
             <div className="mt-6">
-              <h1 className="text-gray-500 dark:text-gray-300">
-                Select type of account
-              </h1>
               <div className="mt-3 md:flex md:items-center md:-mx-2">
-                <button className="flex justify-center w-full px-6 py-3 text-white bg-blue-500 rounded-lg md:w-auto md:mx-2 focus:outline-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                    />
-                  </svg>
-                  <span className="mx-2">Client</span>
-                </button>
-                <button className="flex justify-center  w-full px-6 py-3 mt-4 text-blue-500 border border-blue-500 rounded-lg md:mt-0 md:w-auto md:mx-2 dark:border-blue-400 dark:text-blue-400 focus:outline-none">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="w-6 h-6"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                    />
-                  </svg>
-                  <span className="mx-2">Worker</span>
-                </button>
+            
               </div>
             </div>
 
             {/* Form */}
-            <form className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
+            <form onSubmit={handleSignin} className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
+             
               <input
                 className="p-3 rounded-md"
-                label="First Name"
+                label='Name'
                 type="text"
-                placeholder="John"
+                placeholder="User Name"
+                name="userName"
               />
               <input
                 className="p-3 rounded-md"
                 label="Last Name"
                 type="text"
-                placeholder="Snow"
+                placeholder="Last Name"
+                name="lastName"
               />
               <input
                 className="p-3 rounded-md"
                 label="Phone Number"
                 type="number"
-                placeholder="Phone Number"
+                placeholder="01xxxxxxxxx"
+                name="phoneNumber"
               />
               <input
                 className="p-3 rounded-md"
                 label="Email Address"
                 type="email"
                 placeholder="johnsnow@example.com"
+                name="email"
               />
               <input
                 className="p-3 rounded-md"
                 label="Password"
                 type="password"
                 placeholder="Enter your password"
+                name="password"
               />
               <input
                 className="p-3 rounded-md"
-                label="Confirm Password"
-                type="password"
-                placeholder="Confrim your password"
+                label="Password"
+                type="text"
+                placeholder="Enter your photo link"
+                name="photo"
               />
 
               {/* Submit Button */}
@@ -122,7 +134,11 @@ const Signup = () => {
                   />
                 </svg>
               </button>
+            
             </form>
+            {
+                signingError && <p className="text-red-500">{signingError}</p>
+              }
             <div>
               <h1 className="text-center m-10">
                 Already have an account{" "}
