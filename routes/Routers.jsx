@@ -68,7 +68,7 @@ const router = createBrowserRouter([
     {
       path:'OpenPage/FoodMenu',
       element:<FoodMenu></FoodMenu>,
-      loader: () => fetch('https://restupos-server-riteex18o-chandon-kumar.vercel.app/addFood')
+      loader: () => fetch('https://restupos-server-m7yordbue-chandonkumar23s-projects.vercel.app/addFood')
     },
     {
       path: 'OpenPage/AddFood',

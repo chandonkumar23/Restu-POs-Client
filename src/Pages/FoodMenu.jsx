@@ -18,7 +18,7 @@ const FoodMenu = () => {
   //handle order
   const handleOrder = () =>{
     const orderData = {orderList}
-    fetch('https://restupos-server-riteex18o-chandon-kumar.vercel.app/Order',{
+    fetch('https://restupos-server-m7yordbue-chandonkumar23s-projects.vercel.app/Order',{
       method: 'POST',
       headers:{
         'content-type': 'application/json'
