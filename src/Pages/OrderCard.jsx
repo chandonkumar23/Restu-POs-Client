@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable no-undef */
+import { FaRegCopy } from "react-icons/fa6";
 
 import CheckOrderCard from "./CheckOrderCard";
 
@@ -8,12 +9,10 @@ const OrderCard = ({ order }) => {
   console.log(_id, orderList);
 
   return (
-    <div>
-        
-       <div className="bg-blue-400 rounded-lg m-2 flex ">
-        <h1 className="text-white m-2">Total order: {orderList.length}</h1>
-        <h1 className="text-white m-2">Order Code: {order._id}</h1>
-        
+    <div> 
+       <div className="bg-blue-500 rounded-lg m-2 flex ">
+        <h1 className="text-white m-2">Total food in this order : <span className="font-bold text-blue-700">{orderList.length}</span></h1>
+        <h1 className="text-white m-2 flex items-center gap-2">Order Code : <span className="font-bold text-blue-700">{order._id}</span><FaRegCopy /></h1>  
        </div>
       {orderList.map((orders) => (
         <CheckOrderCard key={_id} orders={orders}></CheckOrderCard>

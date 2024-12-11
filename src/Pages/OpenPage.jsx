@@ -42,7 +42,12 @@ const Sidebar = () => {
         {
           to: "OpenPage/Order",
           icon: "M12 6.253v13M6 8l6-6 6 6",
-          name: "Order report",
+          name: "Sells report",
+        },
+        {
+          to: "OpenPage/Order",
+          icon: "M12 6.253v13M6 8l6-6 6 6",
+          name: "Purchase report",
         },
       ],
     },
@@ -69,6 +74,11 @@ const Sidebar = () => {
           to: "/",
           icon: "M5 13l4 4L19 7",
           name: "Home",
+        },
+        {
+          to: "OpenPage/AddFood",
+          icon: "M12 4v16m8-8H4",
+          name: "Add Food",
         },
         {
           to: "OpenPage/upcoming",

@@ -1,7 +1,8 @@
 /* eslint-disable react/prop-types */
 const CheckOrderCard = ({ orders }) => {
-  const { _id,foodName,foodPhoto,foodLavel} = orders || {};
+  const { _id,foodName,foodPhoto,foodLavel,foodPrice} = orders || {};
   console.log(_id);
+
   return (
     <div>
       <div className="overflow-x-auto">
@@ -49,7 +50,7 @@ const CheckOrderCard = ({ orders }) => {
               </td>
              
               <th>
-                <button className="btn btn-ghost btn-xs">details</button>
+               <h3>{foodPrice} tk</h3>
               </th>
             </tr>
           </tbody>

@@ -83,7 +83,8 @@ const router = createBrowserRouter([
     },
     {
       path: 'OpenPage/Account',
-      element:<Account></Account>
+      element:<Account></Account>,
+      loader: () => fetch('https://restupos-server.vercel.app/Order')
     },
    {
      path: 'OpenPage/upcoming',
