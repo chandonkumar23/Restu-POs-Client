@@ -19,7 +19,7 @@ const AddFood = () => {
       foodLavel
     );
     const newFood = {foodName,foodPrice,foodPhoto,foodType,foodStatus, foodLavel};
-    fetch('https://restupos-server-m7yordbue-chandonkumar23s-projects.vercel.app/addFood',{
+    fetch('https://restupos-server.vercel.app/addFood',{
       method:'POST',
       headers: {
         'content-type': 'application/json'

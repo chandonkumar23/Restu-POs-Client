@@ -1,27 +1,60 @@
-// eslint-disable-next-line react/prop-types
-const CheckOrderCard = () => {
- 
-
+/* eslint-disable react/prop-types */
+const CheckOrderCard = ({ orders }) => {
+  const { _id,foodName,foodPhoto,foodLavel} = orders || {};
+  console.log(_id);
   return (
     <div>
-      <div className="stats stats-vertical lg: flex justify-center mx-autostats-horizontal shadow">
-        <div className="stat">
-          <div className="stat-title">Total Order</div>
-          <div className="stat-value">50</div>
-          <div className="stat-desc">Jan 1st - Feb 1st</div>
-        </div>
-
-        <div className="stat">
-          <div className="stat-title">Total sell</div>
-          <div className="stat-value">4,200</div>
-          <div className="stat-desc">↗︎ 400 (22%)</div>
-        </div>
-
-        <div className="stat">
-          <div className="stat-title">Today sell</div>
-          <div className="stat-value">1,200</div>
-          <div className="stat-desc">↘︎ 90 (14%)</div>
-        </div>
+      <div className="overflow-x-auto">
+        <table className="table">
+          {/* head */}
+          <thead>
+            <tr>
+              <th>
+                <label>
+                  <input type="checkbox" className="checkbox" />
+                </label>
+              </th> 
+              <th>Order name</th>
+              <th>Food code</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* row 1 */}
+            <tr>
+              <th>
+                <label>
+                  <input type="checkbox" className="checkbox" />
+                </label>
+              </th>
+              <td>
+                <div className="flex items-center gap-3">
+                  <div className="avatar">
+                    <div className="mask mask-squircle h-12 w-12">
+                      <img
+                        src={foodPhoto}
+                        alt="Avatar Tailwind CSS Component"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <div className="font-bold">{foodName}</div>
+                    <div className="text-sm opacity-50">{foodLavel}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                {_id}
+                <br />
+                
+              </td>
+             
+              <th>
+                <button className="btn btn-ghost btn-xs">details</button>
+              </th>
+            </tr>
+          </tbody>
+          {/* foot */}
+        </table>
       </div>
     </div>
   );

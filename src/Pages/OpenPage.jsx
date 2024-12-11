@@ -40,14 +40,9 @@ const Sidebar = () => {
         },
       
         {
-          to: "OpenPage/ConfrimOrder",
+          to: "OpenPage/Order",
           icon: "M12 6.253v13M6 8l6-6 6 6",
-          name: "Order",
-        },
-        {
-          to: "OpenPage/upcoming",
-          icon: "M12 8v6m4-2H8",
-          name: "Check Order",
+          name: "Order report",
         },
       ],
     },

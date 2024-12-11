@@ -1,11 +1,11 @@
-import CheckOrder from "./CheckOrder";
+// import CheckOrder from "./CheckOrder";
 
-const ConfrimOrder = () => {
-    return (
-        <div>
-            <CheckOrder></CheckOrder>
-        </div>
-    );
-};
+// const ConfrimOrder = () => {
+//     return (
+//         <div>
+//             <CheckOrder></CheckOrder>
+//         </div>
+//     );
+// };
 
-export default ConfrimOrder;
+// export default ConfrimOrder;

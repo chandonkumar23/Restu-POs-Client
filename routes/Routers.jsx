@@ -9,18 +9,20 @@ import About from "../src/Pages/about";
 import Expriet from "../src/Pages/expriet";
 import OpenPage from "../src/Pages/OpenPage";
 import AddFood from "../src/Pages/OpenPage/AddFood";
-import ConfrimOrder from "../src/Pages/ConfrimOrder";
 import FoodMenu from "../src/Pages/FoodMenu";
 import Account from "../src/Pages/Account";
 import PrivetRoute from "./PrivetRoute";
 import Secret from "../src/Secret";
 import Upcoming from "../src/Pages/Upcoming";
+import ErrorPage from "../src/Pages/ErrorPage";
+import Order from "../src/Pages/Order";
 
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Main />,
+    errorElement:<ErrorPage></ErrorPage>,
     children: [
       {
         path: "/",
@@ -68,15 +70,16 @@ const router = createBrowserRouter([
     {
       path:'OpenPage/FoodMenu',
       element:<FoodMenu></FoodMenu>,
-      loader: () => fetch('https://restupos-server-m7yordbue-chandonkumar23s-projects.vercel.app/addFood')
+      loader: () => fetch('https://restupos-server.vercel.app/addFood')
     },
     {
       path: 'OpenPage/AddFood',
       element: <AddFood></AddFood>
     },
     {
-      path: 'OpenPage/ConfrimOrder',
-      element:<ConfrimOrder></ConfrimOrder>
+      path: 'OpenPage/Order',
+      element:<Order></Order>,
+      loader: () => fetch('https://restupos-server.vercel.app/Order')
     },
     {
       path: 'OpenPage/Account',
