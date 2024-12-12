@@ -2,8 +2,10 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 import Swal from "sweetalert2";
+import UserAxios from "../../routes/UserAxios";
 
 const Signup = () => {
+  const axiposUser = UserAxios();
   const {createUser,updateUserProfile} = useContext(AuthContext)
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,19 +21,35 @@ const Signup = () => {
     const password = form.password.value;
     const photo = form.photo.value;
     console.log(name,lastName,phone,email,password,photo);
+    const userInfo = {name,email,photo};
+
     setSigningError('');
     createUser(email,password)
-    .then( result =>{     
-      updateUserProfile(name,photo)
-      const user = result.user;
-      console.log(user);
-      Swal.fire({
-        position: "top-center",
-        icon: "success",
-        title: "Sign Up Succcess",
-        showConfirmButton: false,
-        timer: 1500
-      });
+    .then(result =>{
+      updateUserProfile(name,photo)     
+      .then(() => {
+        if(createUser){
+          Swal.fire({
+            position: "top-center",
+            icon: "success",
+            title: "Sign Up Succcess",
+            showConfirmButton: false,
+            timer: 1500
+          });
+          fetch('https://restupos-server.vercel.app/usInfo',{
+            method: 'POST',
+            headers:{
+              'content-type': 'application/json'
+            },
+            body: JSON.stringify(userInfo)
+          })
+        }
+       
+        
+      })
+      
+     
+      
       navigate(from, {replace: true});
       
     })

@@ -81,7 +81,7 @@ const Sidebar = () => {
           name: "Add Food",
         },
         {
-          to: "OpenPage/upcoming",
+          to: "OpenPage/AllUser",
           icon: "M12 8v8m-4-4h8m0-4a9 9 0 11-8 0",
           name: "Settings",
         },

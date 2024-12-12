@@ -20,7 +20,8 @@ const Account = ({orders}) => {
           <h2>{accountData.length}</h2>
         </TabPanel>
         <TabPanel>
-         <AccountPrice></AccountPrice>
+          on process..
+         {/* <AccountPrice></AccountPrice> */}
         </TabPanel>
       </Tabs>
     </div>

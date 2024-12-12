@@ -16,6 +16,7 @@ import Secret from "../src/Secret";
 import Upcoming from "../src/Pages/Upcoming";
 import ErrorPage from "../src/Pages/ErrorPage";
 import Order from "../src/Pages/Order";
+import Alluser from "../src/Pages/Alluser";
 
 
 const router = createBrowserRouter([
@@ -89,6 +90,11 @@ const router = createBrowserRouter([
    {
      path: 'OpenPage/upcoming',
      element:<Upcoming></Upcoming>
+   },
+   {
+    path: 'OpenPage/AllUser',
+    element:<Alluser></Alluser>,
+     loader: () =>  fetch('https://restupos-server.vercel.app/usInfo') 
    }
    ]
    
