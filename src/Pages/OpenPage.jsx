@@ -38,11 +38,11 @@ const Sidebar = () => {
           icon: "M16 7v10m-8 0V7m12 0a2 2 0 00-2-2H6a2 2 0 00-2 2m16 0a2 2 0 012 2v8a2 2 0 01-2 2M2 9a2 2 0 012-2m0 10a2 2 0 002 2h8m2 2a2 2 0 002-2m0-10a2 2 0 00-2-2H6",
           name: "Food Menu",
         },
-      
+
         {
           to: "OpenPage/Order",
           icon: "M12 6.253v13M6 8l6-6 6 6",
-          name: "Sells report",
+          name: "Cheak orders",
         },
         {
           to: "OpenPage/Order",
@@ -59,7 +59,12 @@ const Sidebar = () => {
           icon: "M12 4v16m8-8H4",
           name: "Add Food",
         },
-        
+        {
+          to: "OpenPage/Monitoring",
+          icon: "M9 12l2 2 4-4m-7 7h4m4 0h1m-9-5H4m0 4h3",
+          name: "Monitoring",
+        },
+
         {
           to: "OpenPage/Account",
           icon: "M9 12l2 2 4-4m-7 7h4m4 0h1m-9-5H4m0 4h3",
@@ -112,19 +117,16 @@ const Sidebar = () => {
 
   return (
     <div>
-      <div className="flex lg:flex gap-20">
+      <div className="flex lg:flex ">
         <aside className="flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r dark:bg-gray-900 dark:border-gray-700">
-        <div className="flex items-center gap-2 border-gray-500  justify-center avatar ">
+         <Link to={'OpenPage/profile'}>
+         <div className="flex items-center gap-2 border-gray-500  justify-center avatar ">
+            <div className="w-10 border-2 border-blue-600 rounded-full flex">
+              <img className="" src={user?.photoURL} />
+            </div>
+            <h3 className="text-white">{user?.displayName}</h3>
+          </div></Link>
 
-           
-            <div className="w-10 border-2 border-blue-600 rounded-full flex"> 
-              <img className="" src={user?.photoURL} />  
-             
-           </div>       
-           <h3 className="text-white">{user?.displayName}</h3>
-            
-          </div>
-          
           <div className="flex flex-col justify-between flex-1 mt-6">
             <hr />
             <nav className="-mx-3 space-y-6">
@@ -141,8 +143,12 @@ const Sidebar = () => {
           <hr />
           {user ? (
             <>
-              <button onClick={handleLogOut} className="btn bg-black text-white mt-2">
-                Log Out<LuLogOut />
+              <button
+                onClick={handleLogOut}
+                className="btn bg-black text-white mt-2"
+              >
+                Log Out
+                <LuLogOut />
               </button>
             </>
           ) : (
@@ -150,14 +156,11 @@ const Sidebar = () => {
               <Link to={"/login"}>Login</Link>
             </>
           )}
-          
         </aside>
-        
+
         <div className="w-full h-full">
           <Outlet />
-          
         </div>
-        
       </div>
     </div>
   );

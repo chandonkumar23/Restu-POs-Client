@@ -1,10 +1,10 @@
 import axios from "axios";
 
-const axiposUser = axios.create({
-    baseURL :'https://restupos-server.vercel.app' 
+const axiosPublic = axios.create({
+    baseURL :'http://localhost:5000' 
 })
 const UserAxios = () => {
-     return axiposUser;
+    return axiosPublic;
 };
 
 export default UserAxios;

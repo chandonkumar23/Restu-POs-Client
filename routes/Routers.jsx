@@ -17,6 +17,9 @@ import Upcoming from "../src/Pages/Upcoming";
 import ErrorPage from "../src/Pages/ErrorPage";
 import Order from "../src/Pages/Order";
 import Alluser from "../src/Pages/Alluser";
+import Monitoring from "../src/Pages/Monitoring";
+import Profile from "../src/Profile";
+
 
 
 const router = createBrowserRouter([
@@ -78,9 +81,13 @@ const router = createBrowserRouter([
       element: <AddFood></AddFood>
     },
     {
+      path: 'OpenPage/Monitoring',
+      element: <Monitoring></Monitoring>
+    },
+    {
       path: 'OpenPage/Order',
       element:<Order></Order>,
-      loader: () => fetch('https://restupos-server.vercel.app/Order')
+      
     },
     {
       path: 'OpenPage/Account',
@@ -94,8 +101,11 @@ const router = createBrowserRouter([
    {
     path: 'OpenPage/AllUser',
     element:<Alluser></Alluser>,
-     loader: () =>  fetch('https://restupos-server.vercel.app/usInfo') 
-   }
+   },
+   {
+    path: 'OpenPage/profile',
+    element:<Profile></Profile>,
+   },
    ]
    
   }

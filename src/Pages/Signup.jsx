@@ -5,13 +5,13 @@ import Swal from "sweetalert2";
 import UserAxios from "../../routes/UserAxios";
 
 const Signup = () => {
-  const axiposUser = UserAxios();
-  const {createUser,updateUserProfile} = useContext(AuthContext)
+  const axiosUser = UserAxios();
+  const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
-  const [signingError, setSigningError] = useState('');
-  const handleSignin = (event) =>{
+  const [signingError, setSigningError] = useState("");
+  const handleSignin = (event) => {
     event.preventDefault();
     const form = event.target;
     const name = form.userName.value;
@@ -20,46 +20,41 @@ const Signup = () => {
     const email = form.email.value;
     const password = form.password.value;
     const photo = form.photo.value;
-    console.log(name,lastName,phone,email,password,photo);
-    const userInfo = {name,email,photo};
+    console.log(name, lastName, phone, email, password, photo);
 
-    setSigningError('');
-    createUser(email,password)
-    .then(result =>{
-      updateUserProfile(name,photo)     
-      .then(() => {
-        if(createUser){
-          Swal.fire({
-            position: "top-center",
-            icon: "success",
-            title: "Sign Up Succcess",
-            showConfirmButton: false,
-            timer: 1500
+    setSigningError("");
+    createUser(email, password)
+      // eslint-disable-next-line no-unused-vars
+      .then((result) => {
+        updateUserProfile(name, photo).then(() => {
+          const userInfo = {
+            name,
+            phone,
+            email,
+            photo,
+          };
+          axiosUser.post("/usInfo", userInfo).then((res) => {
+            if (res.data.insertedId) {
+              console.log("user added to the database");
+              Swal.fire({
+                position: "top-center",
+                icon: "success",
+                title: "Sign Up Succcess",
+                showConfirmButton: false,
+                timer: 1500,
+              });
+            }
           });
-          fetch('https://restupos-server.vercel.app/usInfo',{
-            method: 'POST',
-            headers:{
-              'content-type': 'application/json'
-            },
-            body: JSON.stringify(userInfo)
-          })
-        }
-       
-        
+        });
+
+        navigate(from, { replace: true });
       })
-      
-     
-      
-      navigate(from, {replace: true});
-      
-    })
-    
-    .catch(error =>{
-      console.log(error);
-      setSigningError(error.message)
-    })
-    
-  }
+
+      .catch((error) => {
+        console.log(error);
+        setSigningError(error.message);
+      });
+  };
   return (
     <section className="bg-white dark:bg-gray-900">
       <div className=" m-5 flex justify-center min-h-screen">
@@ -76,7 +71,7 @@ const Signup = () => {
         <div className="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
           <div className="w-full">
             <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
-             Sign up on the RestuPOS.System
+              Sign up on the RestuPOS.System
             </h1>
             <p className="mt-4 text-gray-500 dark:text-gray-400">
               Let’s get you all set up so you can verify your personal account
@@ -85,17 +80,17 @@ const Signup = () => {
 
             {/* Account Type Buttons */}
             <div className="mt-6">
-              <div className="mt-3 md:flex md:items-center md:-mx-2">
-            
-              </div>
+              <div className="mt-3 md:flex md:items-center md:-mx-2"></div>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSignin} className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2">
-             
+            <form
+              onSubmit={handleSignin}
+              className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2"
+            >
               <input
                 className="p-3 rounded-md"
-                label='Name'
+                label="Name"
                 type="text"
                 placeholder="User Name"
                 name="userName"
@@ -152,11 +147,8 @@ const Signup = () => {
                   />
                 </svg>
               </button>
-            
             </form>
-            {
-                signingError && <p className="text-red-500">{signingError}</p>
-              }
+            {signingError && <p className="text-red-500">{signingError}</p>}
             <div>
               <h1 className="text-center m-10">
                 Already have an account{" "}

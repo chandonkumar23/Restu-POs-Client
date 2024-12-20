@@ -1,54 +1,33 @@
-/* eslint-disable no-unused-vars */
-import React, { useState, useRef, useContext } from "react";
-import { useLoaderData } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
+import { useState } from "react";
 import Swal from "sweetalert2";
-import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 
-const FoodMenu = () => {
-  const { user } = useContext(AuthContext);
-  const userEmail = user.email;
-  const name = user.displayName;
-  const [orderList, setOrderList] = useState([]);
 
-  const foodData = useLoaderData();
-  const printRef = useRef();
-
-  //handlePrint
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-  });
-
-  //handle order
-  const handleOrder = () => {
-    const orderData = {name, userEmail, orderList };
-    fetch("https://restupos-server.vercel.app/Order", {
-      method: "POST",
-      headers: {
-        "content-type": "application/json",
+const FoodMenuCard = () => {
+    
+    const [orderList, setOrderList] = useState([]);
+    
+      //handle order
+  const handleOrder = () =>{
+    const orderData = {orderList}
+    fetch('https://restupos-server.vercel.app/Order',{
+      method: 'POST',
+      headers:{
+        'content-type': 'application/json'
       },
-      body: JSON.stringify(orderData),
+      body: JSON.stringify(orderData)
     })
-      .then((res) => res.json())
-      .then((data) => {
-        Swal.fire({
-          position: "top-center",
-          icon: "success",
-          title: "Order confirmed",
-          showConfirmButton: false,
-          timer: 1500,
-        });
-        setOrderList([]); // Clear the order list after confirmation
-      })
-      .catch((error) => {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: error.message || "Something went wrong!",
-        });
+    .then(res => res.json())
+    .then(data =>{
+      Swal.fire({
+        position: "top-center",
+        icon: "success",
+        title: "Order confrimed",
+        showConfirmButton: false,
+        timer: 1500
       });
-  };
+    })
 
+  }
   // Add item to the receipt
   const handleAddToReceipt = (food) => {
     setOrderList((prev) => [...prev, food]);
@@ -70,27 +49,26 @@ const FoodMenu = () => {
     0
   );
 
-  return (
-    <div className="flex h-screen w-[1000px] bg-gray-400 ">
+    return (
+        <div>
+            <div className="flex h-screen  bg-gray-400 ">
       {/* Left Column - Food Menu */}
       <div className="w-1/2 p-4 bg-gray-200 overflow-y-auto">
         <div className="flex justify-center items-center gap-5 mb-5">
-          <h1 className="text-xl font-bold ">Food Menu</h1>
-          <label className="input input-bordered flex items-center gap-2 py-2 bg-white text-black">
-            <input type="text" className="grow" placeholder="Search" />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              className="h-4 w-4 opacity-70"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </label>
+        <h1 className="text-xl font-bold ">Food Menu</h1>
+        <label className="input input-bordered flex items-center gap-2 py-2 bg-white text-black">
+  <input type="text" className="grow" placeholder="Search" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 16 16"
+    fill="currentColor"
+    className="h-4 w-4 opacity-70">
+    <path
+      fillRule="evenodd"
+      d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
+      clipRule="evenodd" />
+  </svg>
+</label>
         </div>
         {foodData.map((food) => (
           <div
@@ -148,7 +126,7 @@ const FoodMenu = () => {
                 </li>
               ))}
             </ul>
-            <div className="mt-4 p-3 bg-gray-100 border-t flex justify-between">
+            <div  className="mt-4 p-3 bg-gray-100 border-t flex justify-between">
               <span className="text-lg font-medium">Total Price:</span>
               <span className="text-lg font-bold"> {totalPrice} Tk</span>
             </div>
@@ -160,16 +138,10 @@ const FoodMenu = () => {
               >
                 Clear All
               </button>
-              <button
-                onClick={handleOrder}
-                className="bg-blue-600 text-white px-5 py-2 rounded-md"
-              >
-                Confirm Order
+              <button onClick={handleOrder} className="bg-blue-600 text-white px-5 py-2 rounded-md">
+                Confrim order
               </button>
-              <button
-                onClick={handlePrint}
-                className="bg-blue-500 text-white px-5 py-2 rounded-md"
-              >
+              <button onClick={handlePrint} className="bg-blue-500 text-white px-5 py-2 rounded-md">
                 Print
               </button>
             </div>
@@ -177,7 +149,8 @@ const FoodMenu = () => {
         )}
       </div>
     </div>
-  );
+        </div>
+    );
 };
 
-export default FoodMenu;
+export default FoodMenuCard;

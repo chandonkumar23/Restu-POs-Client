@@ -1,5 +1,10 @@
 {
   "projects": {
-    "default": "restupos-2"
-  }
+    "default": "pos-system-9a89c",
+    "npm run build": "restupos-2",
+    "noting": "pos-system-9a89c",
+    "y": "restupos-2"
+  },
+  "targets": {},
+  "etags": {}
 }
