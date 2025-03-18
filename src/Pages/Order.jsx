@@ -9,13 +9,29 @@ const Order = () => {
 
   useEffect(() => {
     if (user?.email) {
+      console.log("Fetching orders for:", user.email); // Debugging
+
       fetch(`https://restupos-server.vercel.app/Order?email=${user.email}`)
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) {
+            throw new Error(`HTTP error! Status: ${res.status}`);
+          }
+          return res.json();
+        })
         .then((data) => {
+          console.log("API Response:", data); // Debugging
+
+          if (!Array.isArray(data)) {
+            console.error("Invalid data format received:", data);
+            setOrders([]); // Set an empty array to avoid crashes
+            setLoading(false);
+            return;
+          }
+
           setOrders(data);
 
           let total = 0;
-          data.map((order) => {
+          data.forEach((order) => {
             if (order.orderList) {
               order.orderList.forEach((item) => {
                 const foodPrice = parseFloat(item.foodPrice) || 0;
@@ -32,7 +48,7 @@ const Order = () => {
           setLoading(false);
         });
     }
-  }, [user]);
+  }, [user?.email]);
 
   if (loading) {
     return (
@@ -44,7 +60,6 @@ const Order = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto bg-gray-50">
-
       {/* Header Section */}
       <div className="bg-gradient-to-r from-teal-500 to-indigo-600 rounded-3xl p-8 text-white shadow-lg mb-8">
         <h1 className="text-3xl font-extrabold mb-4 text-center">Your Orders</h1>
@@ -80,14 +95,14 @@ const Order = () => {
             {/* Table Body */}
             <tbody>
               {myOrders.map((order) => {
-                const totalOrderPrice = order.orderList.reduce(
-                  (sum, item) => sum + parseFloat(item.foodPrice || 0),
+                const totalOrderPrice = order.orderList?.reduce(
+                  (sum, item) => sum + (parseFloat(item.foodPrice) || 0),
                   0
-                );
+                ) || 0;
                 return (
                   <tr key={order._id} className="hover:bg-gray-50 transition-all duration-200">
                     <td className="p-4 border-t border-b border-gray-200">{order._id}</td>
-                    <td className="p-4 border-t border-b border-gray-200 text-center">{order.orderList.length}</td>
+                    <td className="p-4 border-t border-b border-gray-200 text-center">{order.orderList?.length || 0}</td>
                     <td className="p-4 border-t border-b border-gray-200">{totalOrderPrice.toFixed(2)} Tk</td>
                   </tr>
                 );
