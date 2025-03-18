@@ -6,7 +6,8 @@ import './App.css';
 const Calender = () => {
   const [attendanceData, setAttendanceData] = useState([]);
   const [currentDate, setCurrentDate] = useState(new Date());
-  
+  const [selectedDay, setSelectedDay] = useState(null); // Track the selected day
+
   // Function to fetch attendance data from the API
   const fetchAttendanceData = async () => {
     try {
@@ -54,7 +55,12 @@ const Calender = () => {
 
   // Filter attendance data by present/absent status
   const getStatusClass = (attendance) => {
-    return attendance.status ; 
+    return attendance.status;
+  };
+
+  // Handle date click to set the selected day
+  const handleDateClick = (day) => {
+    setSelectedDay(day); // Set the clicked day to selectedDay
   };
 
   useEffect(() => {
@@ -62,22 +68,24 @@ const Calender = () => {
   }, [currentDate]);
 
   return (
-    <div className="container mx-auto p-4 ">
+    <div className="container mx-auto p-4">
+      <h2 className="text-center text-xl font-bold">Employee Attendance Sheet</h2>
+
       <div className="flex justify-between items-center mb-4">
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm"
           onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1))}
         >
-          Previous Month
+          Previous
         </button>
         <h2 className="text-xl font-bold">
           {currentDate.toLocaleString('default', { month: 'long' })} {currentDate.getFullYear()}
         </h2>
         <button
-          className="px-4 py-2 bg-blue-500 text-white rounded"
+          className="bg-blue-500 text-white px-4 py-2 rounded-md text-sm"
           onClick={() => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1))}
         >
-          Next Month
+          Next 
         </button>
       </div>
 
@@ -95,13 +103,19 @@ const Calender = () => {
           const statusClass = attendance.length > 0 ? getStatusClass(attendance[0]) : '';
 
           return (
-            <div key={index} className={`p-2 border ${statusClass}`}>
-              <div className="text-sm">{day}</div>
+            <div
+              key={index}
+              className={`p-2 border ${statusClass} flex flex-col items-center cursor-pointer`}
+              onClick={() => handleDateClick(day)} 
+            >
+              <div className="text-sm font-medium mb-2">{day}</div> 
+
               {attendance.length > 0 && (
-                <div className="text-xs">
+                <div className="text-xs sm:text-sm space-y-1 overflow-auto">
                   {attendance.map((absentee, i) => (
-                   
-                    <div key={i} >{absentee.userName} ({absentee.status})</div>
+                    <div key={i} className="text-left text-ellipsis whitespace-nowrap overflow-hidden">
+                      {/* <span className="font-semibold">{absentee.userName}</span> ({absentee.status}) */}
+                    </div>
                   ))}
                 </div>
               )}
@@ -109,6 +123,23 @@ const Calender = () => {
           );
         })}
       </div>
+
+      {selectedDay && (
+        <div className="mt-4">
+          <h3 className="text-xl font-bold text-center">Attendance for {selectedDay}</h3>
+          <div className="space-y-2 text-center">
+            {getAttendanceForDay(selectedDay).length > 0 ? (
+              getAttendanceForDay(selectedDay).map((attendance, i) => (
+                <div key={i}>
+                  <span className="font-semibold">{attendance.userName}</span> ({attendance.status})
+                </div>
+              ))
+            ) : (
+              <p>No attendance data available for this day.</p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

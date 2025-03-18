@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 const CheckOrderCard = ({ orders }) => {
   const { _id,foodName,foodPhoto,foodLavel,foodPrice} = orders || {};
-  console.log(_id);
+  // console.log(_id);
 
   return (
     <div>

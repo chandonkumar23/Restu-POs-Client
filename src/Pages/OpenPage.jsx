@@ -1,105 +1,181 @@
-import { useContext } from "react";
-import { Link, Outlet } from "react-router-dom";
+import { useContext, useState } from "react";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 import Swal from "sweetalert2";
 import { LuLogOut } from "react-icons/lu";
+import { FaUser, FaCog, FaTable, FaChartLine, FaHome } from "react-icons/fa";
+import { BiFoodMenu, BiPurchaseTag } from "react-icons/bi";
+
+import userAdmin from "../userAdmin";
+
 const Sidebar = () => {
   const { user, logOut } = useContext(AuthContext);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const { pathname } = useLocation();
+  const [isAdmin] = userAdmin();
+
   const handleLogOut = () => {
     logOut()
       .then(() => {
         Swal.fire({
           position: "top-center",
           icon: "success",
-          title: "Succcesfuly logout",
+          title: "Successfully logged out",
           showConfirmButton: false,
           timer: 1500,
         });
       })
-
       .catch((error) => console.log(error));
   };
-  const navItems = [
-    {
-      label: "analytics",
-      links: [
-        {
-          to: "OpenPage/upcoming",
-          icon: "M16 7v10m-8 0V7m12 0a2 2 0 00-2-2H6a2 2 0 00-2 2m16 0a2 2 0 012 2v8a2 2 0 01-2 2M2 9a2 2 0 012-2m0 10a2 2 0 002 2h8m2 2a2 2 0 002-2m0-10a2 2 0 00-2-2H6",
-          name: "Purchase",
-        },
-        {
-          to: "OpenPage/upcoming",
-          icon: "M16 7v10m-8 0V7m12 0a2 2 0 00-2-2H6a2 2 0 00-2 2m16 0a2 2 0 012 2v8a2 2 0 01-2 2M2 9a2 2 0 012-2m0 10a2 2 0 002 2h8m2 2a2 2 0 002-2m0-10a2 2 0 00-2-2H6",
-          name: "Manage purchase",
-        },
-        {
-          to: "OpenPage/FoodMenu",
-          icon: "M16 7v10m-8 0V7m12 0a2 2 0 00-2-2H6a2 2 0 00-2 2m16 0a2 2 0 012 2v8a2 2 0 01-2 2M2 9a2 2 0 012-2m0 10a2 2 0 002 2h8m2 2a2 2 0 002-2m0-10a2 2 0 00-2-2H6",
-          name: "Food Menu",
-        },
 
-        {
-          to: "OpenPage/Order",
-          icon: "M12 6.253v13M6 8l6-6 6 6",
-          name: "Cheak orders",
-        },
-        {
-          to: "OpenPage/Order",
-          icon: "M12 6.253v13M6 8l6-6 6 6",
-          name: "Purchase report",
-        },
-      ],
-    },
-    {
-      label: "content",
-      links: [
-        {
-          to: "OpenPage/AddFood",
-          icon: "M12 4v16m8-8H4",
-          name: "Add Food",
-        },
-        {
-          to: "OpenPage/Monitoring",
-          icon: "M9 12l2 2 4-4m-7 7h4m4 0h1m-9-5H4m0 4h3",
-          name: "Monitoring",
-        },
 
-        {
-          to: "OpenPage/Account",
-          icon: "M9 12l2 2 4-4m-7 7h4m4 0h1m-9-5H4m0 4h3",
-          name: "Account",
-        },
-      ],
-    },
-    {
-      label: "customization",
-      links: [
-        {
-          to: "/",
-          icon: "M5 13l4 4L19 7",
-          name: "Home",
-        },
-        {
-          to: "OpenPage/AddFood",
-          icon: "M12 4v16m8-8H4",
-          name: "Add Food",
-        },
-        {
-          to: "OpenPage/AllUser",
-          icon: "M12 8v8m-4-4h8m0-4a9 9 0 11-8 0",
-          name: "Settings",
-        },
-      ],
-    },
-  ];
+  const isActiveLink = (link) => pathname.includes(link);
+  return (
+    <div className="flex overflow-auto lg:flex">
+      <aside
+        className={`flex flex-col w-64 h-screen px-5 py-2 overflow-y-auto bg-white border-r dark:bg-gray-900 dark:border-gray-700 transition-transform duration-300 ease-in-out ${isSidebarOpen ? "block" : "hidden lg:block"}`}
+      >
+        <Link to={"OpenPage/profile"}>
+          <div className="flex items-center gap-2 border-gray-500 justify-center avatar">
+            <div className="w-10 border-2 border-blue-600 rounded-full flex">
+              <img className="" src={user?.photoURL} alt="user-profile" />
+            </div>
+            <h3 className="text-white">{user?.displayName}</h3>
+          </div>
+        </Link>
 
-  const renderLinks = (links) =>
-    links.map((link, index) => (
-      <Link
-        key={index}
-        to={link.to}
-        className="flex items-center px-3 py-2 text-gray-600 transition-colors duration-300 transform rounded-lg dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700"
+        <div className="flex flex-col justify-between flex-1 mt-6">
+          <hr />
+          <nav className="-mx-3 space-y-6">
+            {/* Links for Admin */}
+            {isAdmin ? (
+              <>
+                <label className="px-3 text-xs text-gray-500 uppercase dark:text-gray-400">
+                  Analytics
+                </label>
+                <Link
+                  to="OpenPage/Account"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/Account") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaUser className="mr-2" />
+                  <span className="text-sm font-medium">Account</span>
+                </Link>
+                <Link
+                  to="OpenPage/alluser"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/alluser") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaCog className="mr-2" />
+                  <span className="text-sm font-medium">Settings</span>
+                </Link>
+                <Link
+                  to="OpenPage/purches"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/purches") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <BiPurchaseTag className="mr-2" />
+                  <span className="text-sm font-medium">Purchase</span>
+                </Link>
+                <Link
+                  to="OpenPage/FoodMenu"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/FoodMenu") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <BiFoodMenu className="mr-2" />
+                  <span className="text-sm font-medium">Food Menu & Order</span>
+                </Link>
+                <Link
+                  to="OpenPage/Order"
+                  className={`flex items-center px-3 py-1 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/Order") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaTable className="mr-2" />
+                  <span className="text-sm font-medium">Check Orders</span>
+                </Link>
+                <Link
+                  to="OpenPage/allOrder"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/allOrder") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaTable className="mr-2" />
+                  <span className="text-sm font-medium">Orders Report</span>
+                </Link>
+                <Link
+                  to="OpenPage/purchaseReport"
+                  className={`flex items-center px-3 py-1 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/purchaseReport") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaChartLine className="mr-2" />
+                  <span className="text-sm font-medium">Purchase Report</span>
+                </Link>
+                <Link
+                  to="OpenPage/AddFood"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/AddFood") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <BiFoodMenu className="mr-2" />
+                  <span className="text-sm font-medium">Add Food</span>
+                </Link>
+                <Link
+                  to="OpenPage/Monitoring"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/Monitoring") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaChartLine className="mr-2" />
+                  <span className="text-sm font-medium">Monitoring</span>
+                </Link>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="OpenPage/purches"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/purches") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <BiPurchaseTag className="mr-2" />
+                  <span className="text-sm font-medium">Purchase</span>
+                </Link>
+                <Link
+                  to="OpenPage/FoodMenu"
+                  className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/FoodMenu") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <BiFoodMenu className="mr-2" />
+                  <span className="text-sm font-medium">Food Menu & Order</span>
+                </Link>
+                <Link
+                  to="OpenPage/Order"
+                  className={`flex items-center px-3 py-1 transition-colors duration-300 transform rounded-lg ${isActiveLink("OpenPage/Order") ? "bg-white text-black" : "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+                >
+                  <FaTable className="mr-2" />
+                  <span className="text-sm font-medium">Check Orders</span>
+                </Link>
+              </>
+            )}
+            <Link
+              to="/"
+              className={`flex items-center px-3 py-2 transition-colors duration-300 transform rounded-lg  "text-gray-600 dark:text-gray-200"} hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-700`}
+            >
+              <FaHome className="mr-2" />
+              <span className="text-sm font-medium">Home</span>
+            </Link>
+          </nav>
+        </div>
+
+        <hr />
+        {/* Logout/Login Button */}
+        {user ? (
+          <button
+            onClick={handleLogOut}
+            className="btn bg-black text-white mt-2 w-full flex items-center justify-center"
+          >
+            Log Out
+            <LuLogOut className="ml-2" />
+          </button>
+        ) : (
+          <Link
+            to={"/login"}
+            className="w-full text-center mt-2 text-white bg-black py-2 rounded-lg"
+          >
+            Login
+          </Link>
+        )}
+      </aside>
+
+
+      <div
+        onClick={() => setSidebarOpen(!isSidebarOpen)}
+        className="lg:hidden absolute top-4 left-4 z-50 cursor-pointer"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -107,60 +183,15 @@ const Sidebar = () => {
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
-          className="w-5 h-5"
+          className="w-6 h-6 text-gray-600"
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d={link.icon} />
+          <path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
-        <span className="mx-2 text-sm font-medium">{link.name}</span>
-      </Link>
-    ));
+      </div>
 
-  return (
-    <div>
-      <div className="flex lg:flex ">
-        <aside className="flex flex-col w-64 h-screen px-5 py-8 overflow-y-auto bg-white border-r dark:bg-gray-900 dark:border-gray-700">
-         <Link to={'OpenPage/profile'}>
-         <div className="flex items-center gap-2 border-gray-500  justify-center avatar ">
-            <div className="w-10 border-2 border-blue-600 rounded-full flex">
-              <img className="" src={user?.photoURL} />
-            </div>
-            <h3 className="text-white">{user?.displayName}</h3>
-          </div></Link>
-
-          <div className="flex flex-col justify-between flex-1 mt-6">
-            <hr />
-            <nav className="-mx-3 space-y-6">
-              {navItems.map((section, index) => (
-                <div key={index} className="space-y-3">
-                  <label className="px-3 text-xs text-gray-500 uppercase dark:text-gray-400">
-                    {section.label}
-                  </label>
-                  {renderLinks(section.links)}
-                </div>
-              ))}
-            </nav>
-          </div>
-          <hr />
-          {user ? (
-            <>
-              <button
-                onClick={handleLogOut}
-                className="btn bg-black text-white mt-2"
-              >
-                Log Out
-                <LuLogOut />
-              </button>
-            </>
-          ) : (
-            <>
-              <Link to={"/login"}>Login</Link>
-            </>
-          )}
-        </aside>
-
-        <div className="w-full h-full">
-          <Outlet />
-        </div>
+      {/* Main Content */}
+      <div className="w-full h-full overflow-hidden">
+        <Outlet />
       </div>
     </div>
   );

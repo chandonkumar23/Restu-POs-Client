@@ -1,8 +1,9 @@
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 import Swal from "sweetalert2";
 import UserAxios from "../../routes/UserAxios";
+import { getAuth, sendEmailVerification } from "firebase/auth"; // Firebase v9+
 
 const Signup = () => {
   const axiosUser = UserAxios();
@@ -11,7 +12,9 @@ const Signup = () => {
   const location = useLocation();
   const from = location.state?.from?.pathname || "/";
   const [signingError, setSigningError] = useState("");
-  const handleSignin = (event) => {
+  const [imageFile, setImageFile] = useState(null);
+
+  const handleSignin = async (event) => {
     event.preventDefault();
     const form = event.target;
     const name = form.userName.value;
@@ -19,145 +22,162 @@ const Signup = () => {
     const phone = form.phoneNumber.value;
     const email = form.email.value;
     const password = form.password.value;
-    const photo = form.photo.value;
-    console.log(name, lastName, phone, email, password, photo);
+    const storeId = form.storeId.value;
 
     setSigningError("");
-    createUser(email, password)
-      // eslint-disable-next-line no-unused-vars
-      .then((result) => {
-        updateUserProfile(name, photo).then(() => {
-          const userInfo = {
-            name,
-            phone,
-            email,
-            photo,
-          };
-          axiosUser.post("/usInfo", userInfo).then((res) => {
-            if (res.data.insertedId) {
-              console.log("user added to the database");
-              Swal.fire({
-                position: "top-center",
-                icon: "success",
-                title: "Sign Up Succcess",
-                showConfirmButton: false,
-                timer: 1500,
-              });
-            }
-          });
+
+    try {
+      let photoURL = "";
+      if (imageFile) {
+        const formData = new FormData();
+        formData.append("image", imageFile);
+
+        const response = await fetch(
+          `https://api.imgbb.com/1/upload?key=6a923dda0f0f06e05fe09a793b7644da`,
+          {
+            method: "POST",
+            body: formData,
+          }
+        );
+        const result = await response.json();
+        if (result.success) {
+          photoURL = result.data.url;
+        } else {
+          throw new Error("Image upload failed");
+        }
+      }
+
+      // Create the user
+      const result = await createUser(email, password);
+      const user = result.user;
+
+      // Check if the user was successfully created
+      if (!user) {
+        throw new Error("User creation failed");
+      }
+
+      await updateUserProfile(name, photoURL);
+
+      const userInfo = {
+        name,
+        lastName,
+        phone,
+        email,
+        photo: photoURL,
+        storeId
+        
+      };
+
+      // Save user info to the database
+      const res = await axiosUser.post("/usInfo", userInfo);
+      if (res.data.insertedId) {
+        Swal.fire({
+          position: "top-center",
+          icon: "success",
+          title: "Sign Up Success",
+          showConfirmButton: false,
+          timer: 1500,
         });
 
-        navigate(from, { replace: true });
-      })
+        // Send email verification
+        const auth = getAuth(); // Get auth instance
+        const currentUser = auth.currentUser; // Get the current authenticated user
+        if (currentUser) {
+          await sendEmailVerification(currentUser); // Send email verification
+          Swal.fire({
+            position: "top-center",
+            icon: "info",
+            title: "Verification Email Sent",
+            text: "Please check your inbox to verify your email address.",
+            showConfirmButton: true,
+          });
+        } else {
+          throw new Error("No authenticated user found after sign-up");
+        }
+      }
 
-      .catch((error) => {
-        console.log(error);
-        setSigningError(error.message);
-      });
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.log(error);
+      setSigningError(error.message);
+    }
   };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+    }
+  };
+
   return (
-    <section className="bg-white dark:bg-gray-900">
-      <div className=" m-5 flex justify-center min-h-screen">
-        {/* Background Image */}
-        <div
-          className="hidden bg-cover lg:block lg:w-2/5 rounded-r-2xl rounded-l-lg"
-          style={{
-            backgroundImage:
-              "url('https://i.ibb.co.com/F4r6Yq9/homepage-hero-copy.webp')",
-          }}
-        ></div>
+    <section className="bg-white dark:bg-gray-900 min-h-screen flex items-center justify-center">
+      <div className="max-w-4xl mx-auto flex flex-col lg:flex-row shadow-lg rounded-lg overflow-hidden">
+        <div className="flex flex-col w-full lg:w-2/3 p-8 bg-white dark:bg-gray-800">
+          <h1 className="text-2xl font-semibold text-gray-800 dark:text-white mb-4">
+            Sign up for RestuPOS.System
+          </h1>
+          <p className="text-gray-500 dark:text-gray-400 mb-6">
+            Let’s get you all set up to verify your personal account and create your profile.
+          </p>
 
-        {/* Form Section */}
-        <div className="flex items-center w-full max-w-3xl p-8 mx-auto lg:px-12 lg:w-3/5">
-          <div className="w-full">
-            <h1 className="text-2xl font-semibold tracking-wider text-gray-800 capitalize dark:text-white">
-              Sign up on the RestuPOS.System
-            </h1>
-            <p className="mt-4 text-gray-500 dark:text-gray-400">
-              Let’s get you all set up so you can verify your personal account
-              and begin setting up your profile.
-            </p>
-
-            {/* Account Type Buttons */}
-            <div className="mt-6">
-              <div className="mt-3 md:flex md:items-center md:-mx-2"></div>
-            </div>
-
-            {/* Form */}
-            <form
-              onSubmit={handleSignin}
-              className="grid grid-cols-1 gap-6 mt-8 md:grid-cols-2"
-            >
-              <input
-                className="p-3 rounded-md"
-                label="Name"
-                type="text"
-                placeholder="User Name"
-                name="userName"
-              />
-              <input
-                className="p-3 rounded-md"
-                label="Last Name"
-                type="text"
-                placeholder="Last Name"
-                name="lastName"
-              />
-              <input
-                className="p-3 rounded-md"
-                label="Phone Number"
-                type="number"
-                placeholder="01xxxxxxxxx"
-                name="phoneNumber"
-              />
-              <input
-                className="p-3 rounded-md"
-                label="Email Address"
-                type="email"
-                placeholder="johnsnow@example.com"
-                name="email"
-              />
-              <input
-                className="p-3 rounded-md"
-                label="Password"
-                type="password"
-                placeholder="Enter your password"
-                name="password"
-              />
-              <input
-                className="p-3 rounded-md"
-                label="Password"
-                type="text"
-                placeholder="Enter your photo link"
-                name="photo"
-              />
-
-              {/* Submit Button */}
-              <button className="flex items-center justify-between w-full px-6 py-3 text-sm tracking-wide text-white capitalize transition-colors duration-300 transform bg-blue-500 rounded-lg hover:bg-blue-400 focus:outline-none focus:ring focus:ring-blue-300 focus:ring-opacity-50">
-                <span>Sign Up</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="w-5 h-5 rtl:-scale-x-100"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            </form>
-            {signingError && <p className="text-red-500">{signingError}</p>}
+          <form onSubmit={handleSignin} className="grid gap-6">
+            <input
+              className="p-3 rounded-md border"
+              type="text"
+              placeholder="User Name"
+              name="userName"
+            />
+            <input
+              className="p-3 rounded-md border"
+              type="text"
+              placeholder="Last Name"
+              name="lastName"
+            />
+            <input
+              className="p-3 rounded-md border"
+              type="number"
+              placeholder="Phone Number"
+              name="phoneNumber"
+            />
+            <input
+              className="p-3 rounded-md border"
+              type="number"
+              placeholder="Store id"
+              name="storeId"
+            />
+            <input
+              className="p-3 rounded-md border"
+              type="email"
+              placeholder="Email Address"
+              name="email"
+            />
+            <input
+              className="p-3 rounded-md border"
+              type="number"
+              placeholder="Password"
+              name="password"
+            />
             <div>
-              <h1 className="text-center m-10">
-                Already have an account{" "}
-                <span className="text-blue-500">
-                  <Link to={"/login"}>Login</Link>
-                </span>
-              </h1>
+              <input
+                className="p-3 rounded-md border w-full"
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
             </div>
-          </div>
+            <button className="w-full px-6 py-3 text-sm font-medium text-white bg-blue-500 rounded-lg hover:bg-blue-400 transition">
+              Sign Up
+            </button>
+          </form>
+          {signingError && <p className="text-red-500 mt-4">{signingError}</p>}
+        </div>
+        <div className="hidden lg:block lg:w-1/3 bg-gray-100 dark:bg-gray-700">
+          <img
+            src="https://i.ibb.co.com/F4r6Yq9/homepage-hero-copy.webp"
+            alt="Signup Promotion"
+            className="w-full h-full object-cover"
+          />
         </div>
       </div>
     </section>

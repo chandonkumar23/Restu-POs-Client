@@ -1,8 +1,8 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useRef, useContext } from "react";
+import React, { useState, useContext } from "react";
 import { useLoaderData } from "react-router-dom";
-import { useReactToPrint } from "react-to-print";
 import Swal from "sweetalert2";
+import printJS from "print-js"; 
 import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 
 const FoodMenu = () => {
@@ -10,18 +10,21 @@ const FoodMenu = () => {
   const userEmail = user.email;
   const name = user.displayName;
   const [orderList, setOrderList] = useState([]);
-
   const foodData = useLoaderData();
-  const printRef = useRef();
+  const [isReceiptVisible, setIsReceiptVisible] = useState(true); 
+  const [searchTerm, setSearchTerm] = useState(""); // State for search term
 
-  //handlePrint
-  const handlePrint = useReactToPrint({
-    content: () => printRef.current,
-  });
+  // Helper function to get current Bangladeshi date
+  const getBangladeshDate = () => {
+    const options = { year: "numeric", month: "long", day: "numeric", hour: "numeric", minute: "numeric", second: "numeric", timeZone: "Asia/Dhaka" };
+    return new Date().toLocaleString("en-US", options);
+  };
 
-  //handle order
+  // Handle order
   const handleOrder = () => {
-    const orderData = {name, userEmail, orderList };
+    const orderDate = getBangladeshDate();
+    const orderData = { name, userEmail, orderDate, orderList };
+
     fetch("https://restupos-server.vercel.app/Order", {
       method: "POST",
       headers: {
@@ -38,7 +41,7 @@ const FoodMenu = () => {
           showConfirmButton: false,
           timer: 1500,
         });
-        setOrderList([]); // Clear the order list after confirmation
+        
       })
       .catch((error) => {
         Swal.fire({
@@ -70,29 +73,58 @@ const FoodMenu = () => {
     0
   );
 
+  // Handle print
+  const handlePrint = () => {
+    if (orderList.length === 0) {
+      Swal.fire({
+        icon: "info",
+        title: "No items to print",
+        text: "Please add some items to the receipt before printing.",
+      });
+      return;
+    }
+
+    setIsReceiptVisible(true);
+
+    const printableContent = document.getElementById("receipt-content");
+    if (printableContent) {
+      printJS({
+        printable: "receipt-content",
+        type: "html",
+        documentTitle: "RestuPos",
+        css: "https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css", 
+      });
+
+      setIsReceiptVisible(false);
+    }
+  };
+
+  const toggleReceiptVisibility = () => {
+    setIsReceiptVisible((prev) => !prev);
+  };
+
+// search food
+  const filteredFoodData = foodData.filter((food) =>
+    food.foodName.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
-    <div className="flex h-screen w-[1000px] bg-gray-400 ">
+    <div id="text" className="flex flex-col md:flex-row h-screen w-full bg-gray-400">
       {/* Left Column - Food Menu */}
-      <div className="w-1/2 p-4 bg-gray-200 overflow-y-auto">
-        <div className="flex justify-center items-center gap-5 mb-5">
-          <h1 className="text-xl font-bold ">Food Menu</h1>
-          <label className="input input-bordered flex items-center gap-2 py-2 bg-white text-black">
-            <input type="text" className="grow" placeholder="Search" />
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 16 16"
-              fill="currentColor"
-              className="h-4 w-4 opacity-70"
-            >
-              <path
-                fillRule="evenodd"
-                d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z"
-                clipRule="evenodd"
-              />
-            </svg>
+      <div className="w-full md:w-1/2 p-4 bg-gray-200 overflow-y-auto">
+        <div className="grid justify-center items-center gap-5 mb-5">
+          <h1 className="text-xl font-bold text-center">Food Menu</h1>
+          <label className="input input-bordered flex items-center gap-2 px-10 bg-white text-black w-full sm:w-auto">
+            <input
+              type="text"
+              className="grow"
+              placeholder="Search food"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)} // Update search term
+            />
           </label>
         </div>
-        {foodData.map((food) => (
+        {filteredFoodData.map((food) => (
           <div
             key={food._id}
             className="flex items-center justify-between p-3 bg-white shadow-md mb-3 rounded-md"
@@ -120,14 +152,25 @@ const FoodMenu = () => {
       </div>
 
       {/* Right Column - Order Receipt */}
-      <div ref={printRef} className="w-1/2 p-4 bg-white overflow-y-auto">
+      <div
+        id="receipt-content"
+        className="w-full md:w-1/2 p-4 bg-white overflow-y-auto"
+      >
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-xl font-bold">Order Receipt</h1>
-          <div className="flex gap-5"></div>
+          <h1 className="text-xl flex justify-center mx-auto font-bold">
+            Order Receipt
+          </h1>
+          <button
+            onClick={toggleReceiptVisibility}
+            className="text-gray-500 text-2xl md:hidden"
+          >
+            {isReceiptVisible ? "↓" : "↑"}
+          </button>
         </div>
-        {orderList.length === 0 ? (
-          <p className="text-gray-600">No items in the receipt</p>
-        ) : (
+        {isReceiptVisible && orderList.length === 0 && (
+          <p className="text-center text-gray-500">No food in receipt</p>
+        )}
+        {isReceiptVisible && orderList.length > 0 && (
           <>
             <ul>
               {orderList.map((item, index) => (
@@ -137,9 +180,9 @@ const FoodMenu = () => {
                 >
                   <span>{item.foodName}</span>
                   <div className="flex items-center gap-4">
-                    <span>{item.foodPrice}Tk</span>
+                    <span>{item.foodPrice} Tk</span>
                     <button
-                      className="text-red-500 font-bold"
+                      className="text-red-500 px-4 py-2 rounded-md"
                       onClick={() => handleRemoveItem(index)}
                     >
                       X
@@ -148,9 +191,10 @@ const FoodMenu = () => {
                 </li>
               ))}
             </ul>
+
             <div className="mt-4 p-3 bg-gray-100 border-t flex justify-between">
               <span className="text-lg font-medium">Total Price:</span>
-              <span className="text-lg font-bold"> {totalPrice} Tk</span>
+              <span className="text-lg font-bold">{totalPrice} Tk</span>
             </div>
             <div className="flex gap-5 m-5 justify-end">
               <button
@@ -162,13 +206,13 @@ const FoodMenu = () => {
               </button>
               <button
                 onClick={handleOrder}
-                className="bg-blue-600 text-white px-5 py-2 rounded-md"
+                className="bg-blue-500 text-white px-4 py-2 rounded-md"
               >
                 Confirm Order
               </button>
               <button
                 onClick={handlePrint}
-                className="bg-blue-500 text-white px-5 py-2 rounded-md"
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
               >
                 Print
               </button>

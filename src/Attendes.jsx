@@ -6,18 +6,17 @@ import { AuthContext } from "./Provider/AuthProvider/AuthProvider";
 const Attendance = () => {
   const [status, setStatus] = useState("");
   const [date, setDate] = useState("");
-  const [userId, setUserId] = useState(1); // Simulate logged-in user ID
+  const [userId, setUserId] = useState(1); 
   const { user } = useContext(AuthContext);
   const userName = user.displayName;
+
   useEffect(() => {
-    // Set today's date for the attendance
     setDate(new Date().toISOString().split("T")[0]);
   }, []);
 
   const handleAttendanceSubmit = async () => {
-    // Simulate submitting attendance
     console.log("Attendance submitted:", { userId, date, status });
-    fetch("http://localhost:5000/atten", {
+    fetch("https://restupos-server.vercel.app/atten", {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -31,7 +30,7 @@ const Attendance = () => {
           Swal.fire({
             position: "top-center",
             icon: "success",
-            title: "Attendens submited",
+            title: "Attendance submitted",
             showConfirmButton: false,
             timer: 1500,
           });
@@ -40,16 +39,16 @@ const Attendance = () => {
   };
 
   return (
-    <div className=" m-5">
-      <div className="w-96  shadow-md rounded-lg">
-        <h2 className="text-xl mb-4 text-center">Mark Attendance</h2>
+    <div className="flex justify-center items-center py-6 px-4 sm:px-8 lg:px-16">
+      <div className="w-full max-w-md shadow-md rounded-lg bg-white p-6">
+        <h2 className="text-xl font-semibold mb-4 text-center">Mark Attendance</h2>
         <div className="mb-4">
-          <label htmlFor="status" className="block mb-2">
+          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-2">
             Attendance Status
           </label>
           <select
             id="status"
-            className="w-full p-2 border border-gray-300 rounded-md"
+            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setStatus(e.target.value)}
             value={status}
           >
@@ -61,7 +60,7 @@ const Attendance = () => {
           </select>
         </div>
         <button
-          className="w-full p-2 bg-green-500 text-white rounded-md"
+          className="w-full p-3 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-400 disabled:bg-gray-400"
           onClick={handleAttendanceSubmit}
           disabled={!status}
         >

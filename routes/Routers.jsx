@@ -13,12 +13,16 @@ import FoodMenu from "../src/Pages/FoodMenu";
 import Account from "../src/Pages/Account";
 import PrivetRoute from "./PrivetRoute";
 import Secret from "../src/Secret";
-import Upcoming from "../src/Pages/Upcoming";
 import ErrorPage from "../src/Pages/ErrorPage";
 import Order from "../src/Pages/Order";
 import Alluser from "../src/Pages/Alluser";
 import Monitoring from "../src/Pages/Monitoring";
 import Profile from "../src/Profile";
+import Purchase from "../src/Purchase";
+import PurchesReporting from "../src/PurchesReporting";
+import AllOrder from "../src/AllOrder";
+import AllProducts from "../src/Pages/AllProducts";
+
 
 
 
@@ -90,13 +94,22 @@ const router = createBrowserRouter([
       
     },
     {
+      path: 'OpenPage/allOrder',
+      element:<AllOrder></AllOrder>,
+      
+    },
+    {
       path: 'OpenPage/Account',
       element:<Account></Account>,
-      loader: () => fetch('https://restupos-server.vercel.app/Order')
+    
     },
    {
-     path: 'OpenPage/upcoming',
-     element:<Upcoming></Upcoming>
+     path: 'OpenPage/purches',
+     element:<Purchase></Purchase>
+   },
+   {
+     path: 'OpenPage/purchaseReport',
+     element:<PurchesReporting></PurchesReporting>
    },
    {
     path: 'OpenPage/AllUser',
@@ -105,6 +118,10 @@ const router = createBrowserRouter([
    {
     path: 'OpenPage/profile',
     element:<Profile></Profile>,
+   },
+   {
+    path: 'OpenPage/allProducts',
+    element:<AllProducts></AllProducts>,
    },
    ]
    

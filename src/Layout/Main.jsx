@@ -1,21 +1,15 @@
 
 import { Outlet } from "react-router-dom";
+import Footer from "../Pages/Footer";
 
 
 
 const Main = () => {
   return (
  
-    <div>
-           
+    <div>        
            <Outlet></Outlet>
-         
-           
-     
-
-     
-
-      {/* Footer */}
+           <Footer></Footer>
     </div>
   );
 };
