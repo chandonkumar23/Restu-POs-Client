@@ -4,8 +4,9 @@ import { AuthContext } from "../Provider/AuthProvider/AuthProvider";
 import Swal from "sweetalert2";
 import UserAxios from "../../routes/UserAxios";
 import { getAuth, sendEmailVerification } from "firebase/auth"; // Firebase v9+
-
+import { Eye, EyeOff } from 'lucide-react';
 const Signup = () => {
+    const [showPassword, setShowPassword] = useState(false);
   const axiosUser = UserAxios();
   const { createUser, updateUserProfile } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -152,12 +153,21 @@ const Signup = () => {
               placeholder="Email Address"
               name="email"
             />
-            <input
-              className="p-3 rounded-md border"
-              type="number"
-              placeholder="Password"
-              name="password"
-            />
+           <div className="relative w-full">
+      <input
+        className="p-3 pr-10 rounded-md border w-full"
+        type={showPassword ? 'text' : 'password'}
+        placeholder="Password"
+        name="password"
+      />
+      <button
+        type="button"
+          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white"
+        onClick={() => setShowPassword(!showPassword)}
+      >
+        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+      </button>
+    </div>
             <div>
               <input
                 className="p-3 rounded-md border w-full"
